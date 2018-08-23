@@ -10,7 +10,7 @@ A simple and idiomatic interface for measurement CPU time:
 
 ```rust
 
-let start = process_time();
+let start = ProcessTime::now();
 # .. do something ..
 let cpu_time: Duration = start.elapsed();
 println!(" {:?}");
