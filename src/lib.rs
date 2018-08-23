@@ -24,8 +24,9 @@
 
 extern crate libc;
 
-#[cfg(target_os="linux")]
-mod linux;
+// It looks like all modern unixes support clock_gettime(..CPUTIME..)
+#[cfg(unix)]
+mod clock_gettime;
 
-#[cfg(target_os="linux")]
-pub use linux::{ProcessTime, ThreadTime};
+#[cfg(unix)]
+pub use clock_gettime::{ProcessTime, ThreadTime};
