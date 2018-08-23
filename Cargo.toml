@@ -12,5 +12,8 @@ documentation = "https://docs.rs/cpu-time"
 version = "0.1.0"
 authors = ["Paul Colomiets <paul@colomiets.name>"]
 
-[dependencies]
+[target.'cfg(unix)'.dependencies]
 libc = "0.2.43"
+
+[target.'cfg(windows)'.dependencies]
+winapi = { version="0.3.5", features=["processthreadsapi", "minwindef"] }

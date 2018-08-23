@@ -22,11 +22,13 @@
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 
-extern crate libc;
+#[cfg(unix)] extern crate libc;
+#[cfg(windows)] extern crate winapi;
 
 // It looks like all modern unixes support clock_gettime(..CPUTIME..)
-#[cfg(unix)]
-mod clock_gettime;
+#[cfg(unix)] mod clock_gettime;
+#[cfg(windows)] mod windows;
 
-#[cfg(unix)]
-pub use clock_gettime::{ProcessTime, ThreadTime};
+#[cfg(unix)] pub use clock_gettime::{ProcessTime, ThreadTime};
+
+#[cfg(windows)] pub use windows::{ProcessTime, ThreadTime};
