@@ -53,6 +53,11 @@ impl ProcessTime {
     pub fn duration_since(&self, timestamp: ProcessTime) -> Duration {
         self.0 - timestamp.0
     }
+
+    /// Returns the total amount of CPU time used from the program start.
+    pub fn as_duration(&self) -> Duration {
+        self.0
+    }
 }
 
 impl ThreadTime {
@@ -83,5 +88,10 @@ impl ThreadTime {
     /// from the previous timestamp.
     pub fn duration_since(&self, timestamp: ThreadTime) -> Duration {
         self.0 - timestamp.0
+    }
+
+    /// Returns the total amount of CPU time used from the program start.
+    pub fn as_duration(&self) -> Duration {
+        self.0
     }
 }
