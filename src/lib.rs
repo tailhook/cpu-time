@@ -12,11 +12,17 @@
 //! use std::time::Duration;
 //! use cpu_time::ProcessTime;
 //!
+//! // Manually handle errors
+//! let start = ProcessTime::try_now().expect("Getting process time failed");
+//! // .. do something ..
+//! let cpu_time: Duration = start.try_elapsed().expect("Getting process time failed");;
+//! println!(" {:?}", cpu_time);
+//!
+//! // Panic in case of an error
 //! let start = ProcessTime::now();
 //! // .. do something ..
 //! let cpu_time: Duration = start.elapsed();
 //! println!(" {:?}", cpu_time);
-//!
 //! ```
 
 #![warn(missing_debug_implementations)]
