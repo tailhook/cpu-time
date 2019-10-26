@@ -10,7 +10,7 @@ use cpu_time::{ProcessTime, ThreadTime};
 fn process_time() {
     let time = ProcessTime::now();
     sleep(Duration::new(1, 0));
-    let elapsed = time.unwrap().elapsed().unwrap();
+    let elapsed = time.elapsed();
     assert!(elapsed < Duration::from_millis(100));
 }
 
@@ -18,6 +18,6 @@ fn process_time() {
 fn thread_time() {
     let time = ThreadTime::now();
     sleep(Duration::new(1, 0));
-    let elapsed = time.unwrap().elapsed().unwrap();
+    let elapsed = time.elapsed();
     assert!(elapsed < Duration::from_millis(100));
 }

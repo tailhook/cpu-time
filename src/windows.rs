@@ -49,8 +49,8 @@ fn zero() -> FILETIME {
 }
 
 impl ProcessTime {
-    /// Get current CPU time used by a process process
-    pub fn now() -> Result<ProcessTime> {
+    /// Get current CPU time used by a process
+    pub fn try_now() -> Result<Self> {
         let mut kernel_time = zero();
         let mut user_time = zero();
         let process = unsafe { GetCurrentProcess() };
@@ -63,14 +63,40 @@ impl ProcessTime {
                 &mut user_time,
             )
         })?;
-        Ok(ProcessTime(to_duration(kernel_time, user_time)))
+        Ok(Self(to_duration(kernel_time, user_time)))
     }
+
+    /// Get current CPU time used by a process
+    ///
+    /// # Panics
+    ///
+    /// If GetProcessTimes fails. This may happen, for instance, in case of
+    /// insufficient permissions.
+    ///
+    /// See [this MSDN page][msdn] for details. If you prefer to handle such errors, consider
+    /// using `try_now`.
+    ///
+    /// [msdn]: https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocesstimes
+    pub fn now() -> Self {
+        Self::try_now().expect("GetProcessTimes failed")
+    }
+
     /// Returns the amount of CPU time used from the previous timestamp to now.
-    pub fn elapsed(&self) -> Result<Duration> {
-        Ok(ProcessTime::now()?.duration_since(*self))
+    pub fn try_elapsed(&self) -> Result<Duration> {
+        Ok(Self::try_now()?.duration_since(*self))
     }
+
+    /// Returns the amount of CPU time used from the previous timestamp to now.
+    ///
+    /// # Panics
+    ///
+    /// If `ProcessTime::now()` panics.
+    pub fn elapsed(&self) -> Duration {
+        Self::now().duration_since(*self)
+    }
+
     /// Returns the amount of CPU time used from the previous timestamp.
-    pub fn duration_since(&self, timestamp: ProcessTime) -> Duration {
+    pub fn duration_since(&self, timestamp: Self) -> Duration {
         self.0 - timestamp.0
     }
 
@@ -82,7 +108,7 @@ impl ProcessTime {
 
 impl ThreadTime {
     /// Get current CPU time used by a process process
-    pub fn now() -> Result<ThreadTime> {
+    pub fn try_now() -> Result<Self> {
         let mut kernel_time = zero();
         let mut user_time = zero();
         let thread = unsafe { GetCurrentThread() };
@@ -95,13 +121,37 @@ impl ThreadTime {
                 &mut user_time,
             )
         })?;
-        Ok(ThreadTime(to_duration(kernel_time, user_time), PhantomData))
+        Ok(Self(to_duration(kernel_time, user_time), PhantomData))
     }
-    /// Returns the amount of CPU time used by the current thread
-    /// from the previous timestamp to now.
-    pub fn elapsed(&self) -> Result<Duration> {
-        Ok(ThreadTime::now()?.duration_since(*self))
+
+    ///
+    /// # Panics
+    ///
+    /// If GetThreadTimes fails. This may happen, for instance, in case of
+    /// insufficient permissions.
+    ///
+    /// See [this MSDN page][msdn] for details. If you prefer to handle such errors, consider
+    /// using `try_now`.
+    ///
+    /// [msdn]: https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadtimes
+    pub fn now() -> Self {
+        Self::try_now().expect("GetThreadTimes failed")
     }
+
+    /// Returns the amount of CPU time used from the previous timestamp to now.
+    pub fn try_elapsed(&self) -> Result<Duration> {
+        Ok(Self::try_now()?.duration_since(*self))
+    }
+
+    /// Returns the amount of CPU time used from the previous timestamp to now.
+    ///
+    /// # Panics
+    ///
+    /// If `ThreadTime::now()` panics.
+    pub fn elapsed(&self) -> Duration {
+        Self::now().duration_since(*self)
+    }
+
     /// Returns the amount of CPU time used by the current thread
     /// from the previous timestamp.
     pub fn duration_since(&self, timestamp: ThreadTime) -> Duration {

@@ -32,7 +32,7 @@ pub struct ThreadTime(
 
 impl ProcessTime {
     /// Get current CPU time used by a process process
-    pub fn now() -> Result<ProcessTime> {
+    pub fn try_now() -> Result<Self> {
         let mut time = timespec {
             tv_sec: 0,
             tv_nsec: 0,
@@ -43,12 +43,35 @@ impl ProcessTime {
             time.tv_nsec as u32,
         )))
     }
-    /// Returns the amount of CPU time used from the previous timestamp to now.
-    pub fn elapsed(&self) -> Result<Duration> {
-        Ok(ProcessTime::now()?.duration_since(*self))
+
+    /// Get current CPU time used by a process
+    ///
+    /// # Panics
+    ///
+    /// If `CLOCK_PROCESS_CPUTIME_ID` is not supported by the kernel.
+    /// On Linux, it was added in version 2.6.12 (year 2005).
+    /// On OpenBSD & FreeBSD support was added in 2013.
+    /// On MacOS, `clock_gettime` was not supported until Sierra (2016).
+    pub fn now() -> Self {
+        Self::try_now().expect("CLOCK_PROCESS_CPUTIME_ID unsupported")
     }
+
+    /// Returns the amount of CPU time used from the previous timestamp to now.
+    pub fn try_elapsed(&self) -> Result<Duration> {
+        Ok(Self::try_now()?.duration_since(*self))
+    }
+
+    /// Returns the amount of CPU time used from the previous timestamp to now.
+    ///
+    /// # Panics
+    ///
+    /// If `ProcessTime::now()` panics.
+    pub fn elapsed(&self) -> Duration {
+        Self::now().duration_since(*self)
+    }
+
     /// Returns the amount of CPU time used from the previous timestamp.
-    pub fn duration_since(&self, timestamp: ProcessTime) -> Duration {
+    pub fn duration_since(&self, timestamp: Self) -> Duration {
         self.0 - timestamp.0
     }
 
@@ -60,7 +83,7 @@ impl ProcessTime {
 
 impl ThreadTime {
     /// Get current CPU time used by a process process
-    pub fn now() -> Result<ThreadTime> {
+    pub fn try_now() -> Result<Self> {
         let mut time = timespec {
             tv_sec: 0,
             tv_nsec: 0,
@@ -72,11 +95,34 @@ impl ThreadTime {
             PhantomData,
         ))
     }
+
+    /// Get current CPU time used by a process
+    ///
+    /// # Panics
+    ///
+    /// If `CLOCK_THREAD_CPUTIME_ID` is not supported by the kernel.
+    /// On Linux, it was added in version 2.6.12 (year 2005).
+    /// On OpenBSD & FreeBSD support was added in 2013.
+    /// On MacOS, `clock_gettime` was not supported until Sierra (2016).
+    pub fn now() -> Self {
+        Self::try_now().expect("CLOCK_PROCESS_CPUTIME_ID unsupported")
+    }
+
     /// Returns the amount of CPU time used by the current thread
     /// from the previous timestamp to now.
-    pub fn elapsed(&self) -> Result<Duration> {
-        Ok(ThreadTime::now()?.duration_since(*self))
+    pub fn try_elapsed(&self) -> Result<Duration> {
+        Ok(ThreadTime::try_now()?.duration_since(*self))
     }
+
+    /// Returns the amount of CPU time used from the previous timestamp to now.
+    ///
+    /// # Panics
+    ///
+    /// If `ThreadTime::now()` panics.
+    pub fn elapsed(&self) -> Duration {
+        Self::now().duration_since(*self)
+    }
+
     /// Returns the amount of CPU time used by the current thread
     /// from the previous timestamp.
     pub fn duration_since(&self, timestamp: ThreadTime) -> Duration {
