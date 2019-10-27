@@ -3,11 +3,9 @@ use std::marker::PhantomData;
 use std::rc::Rc;
 use std::time::Duration;
 
-use winapi::shared::minwindef::FILETIME;
+use winapi::shared::minwindef::{BOOL, FILETIME};
 use winapi::um::processthreadsapi::{GetCurrentProcess, GetCurrentThread};
 use winapi::um::processthreadsapi::{GetProcessTimes, GetThreadTimes};
-
-use cvt::cvt;
 
 /// CPU Time Used by The Whole Process
 ///
@@ -161,5 +159,15 @@ impl ThreadTime {
     /// Returns the total amount of CPU time used from the program start.
     pub fn as_duration(&self) -> Duration {
         self.0
+    }
+}
+
+// Copied over from https://github.com/marmistrz/cvt,
+// the maintainer doesn't want to include it as an external dependency
+pub fn cvt(i: BOOL) -> Result<BOOL> {
+    if i == 0 {
+        Err(std::io::Error::last_os_error())
+    } else {
+        Ok(i)
     }
 }

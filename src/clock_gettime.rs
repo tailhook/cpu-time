@@ -6,8 +6,6 @@ use std::time::Duration;
 use libc::{clock_gettime, timespec};
 use libc::{CLOCK_PROCESS_CPUTIME_ID, CLOCK_THREAD_CPUTIME_ID};
 
-use cvt::cvt;
-
 /// CPU Time Used by The Whole Process
 ///
 /// This is an opaque type similar to `std::time::Instant`.
@@ -132,5 +130,15 @@ impl ThreadTime {
     /// Returns the total amount of CPU time used from the program start.
     pub fn as_duration(&self) -> Duration {
         self.0
+    }
+}
+
+// Copied over from https://github.com/marmistrz/cvt,
+// the maintainer doesn't want to include it as an external dependency
+fn cvt(t: libc::c_int) -> Result<libc::c_int> {
+    if t == -1 {
+        Err(std::io::Error::last_os_error())
+    } else {
+        Ok(t)
     }
 }

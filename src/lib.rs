@@ -30,7 +30,6 @@
 
 #[cfg(unix)] extern crate libc;
 #[cfg(windows)] extern crate winapi;
-extern crate cvt;
 
 // It looks like all modern unixes support clock_gettime(..CPUTIME..)
 #[cfg(unix)] mod clock_gettime;
