@@ -46,10 +46,15 @@ impl ProcessTime {
     ///
     /// # Panics
     ///
-    /// If `CLOCK_PROCESS_CPUTIME_ID` is not supported by the kernel.
-    /// On Linux, it was added in version 2.6.12 (year 2005).
-    /// On OpenBSD & FreeBSD support was added in 2013.
-    /// On MacOS, `clock_gettime` was not supported until Sierra (2016).
+    /// If `CLOCK_THREAD_CPUTIME_ID` is not supported by the kernel.
+    ///
+    /// On Linux, it was added in version 2.6.12 (year 2005). \
+    /// [On OpenBSD][openbsd] & [FreeBSD][freebsd] support was added in 2013. \
+    /// [On MacOS][macos], `clock_gettime` was not supported until Sierra (2016).
+    ///
+    /// [openbsd]: https://github.com/openbsd/src/commit/7b36c281ba1c99d528efca950572c207acd2e184
+    /// [freebsd]: https://github.com/freebsd/freebsd/commit/e8cf8aab231fe1b1ae82eff6e64af146514eea71
+    /// [macos]: http://www.manpagez.com/man/3/clock_gettime/
     pub fn now() -> Self {
         Self::try_now().expect("CLOCK_PROCESS_CPUTIME_ID unsupported")
     }
@@ -99,9 +104,14 @@ impl ThreadTime {
     /// # Panics
     ///
     /// If `CLOCK_THREAD_CPUTIME_ID` is not supported by the kernel.
-    /// On Linux, it was added in version 2.6.12 (year 2005).
-    /// On OpenBSD & FreeBSD support was added in 2013.
-    /// On MacOS, `clock_gettime` was not supported until Sierra (2016).
+    ///
+    /// On Linux, it was added in version 2.6.12 (year 2005). \
+    /// [On OpenBSD][openbsd] & [FreeBSD][freebsd] support was added in 2013. \
+    /// [On MacOS][macos], `clock_gettime` was not supported until Sierra (2016).
+    ///
+    /// [openbsd]: https://github.com/openbsd/src/commit/7b36c281ba1c99d528efca950572c207acd2e184
+    /// [freebsd]: https://github.com/freebsd/freebsd/commit/e8cf8aab231fe1b1ae82eff6e64af146514eea71
+    /// [macos]: http://www.manpagez.com/man/3/clock_gettime/
     pub fn now() -> Self {
         Self::try_now().expect("CLOCK_PROCESS_CPUTIME_ID unsupported")
     }
