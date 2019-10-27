@@ -9,7 +9,7 @@ keywords = ["cpu", "time", "cpu-time"]
 categories = ["api-bindings"]
 homepage = "https://github.com/tailhook/cpu-time"
 documentation = "https://docs.rs/cpu-time"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Paul Colomiets <paul@colomiets.name>"]
 
 [target.'cfg(unix)'.dependencies]
