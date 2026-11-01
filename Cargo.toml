@@ -1,19 +1,17 @@
 [package]
 name = "cpu-time"
-description = """
-    Small crate that provides CPU time measurement.
-"""
-license = "MIT/Apache-2.0"
-readme = "README.md"
-keywords = ["cpu", "time", "cpu-time"]
-categories = ["api-bindings"]
-homepage = "https://github.com/tailhook/cpu-time"
-documentation = "https://docs.rs/cpu-time"
 version = "1.0.0"
 authors = ["Paul Colomiets <paul@colomiets.name>"]
+description = "Small crate that provides CPU time measurement."
+documentation = "https://docs.rs/cpu-time"
+readme = "README.md"
+repository = "https://github.com/tailhook/cpu-time"
+license = "MIT OR Apache-2.0"
+keywords = ["cpu", "cpu-time", "time"]
+categories = ["api-bindings"]
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2.43"
 
 [target.'cfg(windows)'.dependencies]
-winapi = { version="0.3.5", features=["processthreadsapi", "minwindef"] }
+winapi = { version = "0.3.5", features = ["minwindef", "processthreadsapi"] }
